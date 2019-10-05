@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
+import 'package:image_picker/image_picker.dart';
 
 void main() => runApp(MyApp());
 
@@ -80,16 +83,25 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // ignore: non_constant_identifier_names
   Future ImageDetector(BuildContext context) async {
-    final path = await getTemporaryDirectory();
-    print(path.path);
-    await _cameraController.takePicture('/data/user/0/com.example.seafood/cache');
-    final FirebaseVisionImage img = FirebaseVisionImage.fromFilePath(path.path);
+    File _image;
+    Future getImage() async {
+      var image = await ImagePicker.pickImage(source: ImageSource.camera);
+
+      setState(() {
+        _image = image;
+      });
+    }
+    await getImage();
+    print('asd' + _image.path);
+    //await _cameraController.takePicture('/data/user/0/com.example.seafood/cache');
+    final FirebaseVisionImage img = FirebaseVisionImage.fromFilePath(_image.path);
     final ImageLabeler labeler = FirebaseVision.instance.imageLabeler();
     final List<ImageLabel> labels = await labeler.processImage(img);
-
+    print('asda');
     var i;
     for (i in labels) {
-      if (i.toString() == 'Hot Dog')
+      print("asdaisd" + i);
+      if (i.toString().toLowerCase() == 'hot dog' || i.toString() == 'Hot Dog' || i.toString() == 'HotDog'  || i.toString() == 'hotdog' )
         setState(
           () {
             isHotDog = true;
