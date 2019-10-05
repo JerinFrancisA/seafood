@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -30,15 +31,6 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
 
   @override
@@ -47,76 +39,62 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   CameraController _cameraController;
-  bool ishotdog = false;
-
+  bool isHotDog = false;
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text('SEE FOOD'),
       ),
-
-
       floatingActionButton: FloatingActionButton(
         onPressed: () => ImageDetector(context),
-
         tooltip: 'Increment',
         child: Icon(Icons.camera),
       ),
       body: Column(
         children: <Widget>[
-      AnimatedContainer(
-      width: double.infinity,
-        height: 100.0,
-        color:ishotdog == null
-            ? Colors.black
-            : ishotdog == true ? Colors.green : Colors.red,
-        child: Padding(
-          padding: const EdgeInsets.only(top: 28.0),
-          child: Center(
-            child: Text(
-              ishotdog == null
-                  ? ""
-                  : ishotdog == true ? "HOT DOG!" : "NOT HOT DOG!",
-              style: Theme.of(context).textTheme.display1,
+          AnimatedContainer(
+            width: double.infinity,
+            height: 100.0,
+            color: isHotDog == null
+                ? Colors.black
+                : isHotDog == true ? Colors.green : Colors.red,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 28.0),
+              child: Center(
+                child: Text(
+                  isHotDog == null
+                      ? ""
+                      : isHotDog == true ? "HOT DOG!" : "NOT HOT DOG!",
+                  style: Theme.of(context).textTheme.display1,
+                ),
+              ),
             ),
+            duration: Duration(milliseconds: 400),
           ),
-        ),
-        duration: Duration(milliseconds: 400),
+        ], // This trailing comma makes auto-formatting nicer for build methods.
       ),
-      ],// This trailing comma makes auto-formatting nicer for build methods.
-    ),
     );
   }
 
   // ignore: non_constant_identifier_names
   Future ImageDetector(BuildContext context) async {
-    final path = await getTemporaryDirectory().toString();
-    await _cameraController.takePicture(path);
-    final FirebaseVisionImage img = FirebaseVisionImage.fromFilePath(path);
+    final path = await getTemporaryDirectory();
+    print(path.path);
+    await _cameraController.takePicture('/data/user/0/com.example.seafood/cache');
+    final FirebaseVisionImage img = FirebaseVisionImage.fromFilePath(path.path);
     final ImageLabeler labeler = FirebaseVision.instance.imageLabeler();
     final List<ImageLabel> labels = await labeler.processImage(img);
 
     var i;
-    for(i in labels) {
-      if(i.toString() == 'Hot Dog')
-        setState(() {ishotdog = true;
-        });
-
+    for (i in labels) {
+      if (i.toString() == 'Hot Dog')
+        setState(
+          () {
+            isHotDog = true;
+          },
+        );
     }
-
-
-
-
   }
-
 }
