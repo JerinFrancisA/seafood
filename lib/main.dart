@@ -80,7 +80,6 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
-
   // ignore: non_constant_identifier_names
   Future ImageDetector(BuildContext context) async {
     File _image;
@@ -92,16 +91,14 @@ class _MyHomePageState extends State<MyHomePage> {
       });
     }
     await getImage();
-    print('asd' + _image.path);
     //await _cameraController.takePicture('/data/user/0/com.example.seafood/cache');
     final FirebaseVisionImage img = FirebaseVisionImage.fromFilePath(_image.path);
     final ImageLabeler labeler = FirebaseVision.instance.imageLabeler();
     final List<ImageLabel> labels = await labeler.processImage(img);
-    print('asda');
     var i;
     for (i in labels) {
-      print("asdaisd" + i);
-      if (i.toString().toLowerCase() == 'hot dog' || i.toString() == 'Hot Dog' || i.toString() == 'HotDog'  || i.toString() == 'hotdog' )
+      print(i.text + " perc : " + i.confidence.toString());
+      if (i.text == 'hot dog' || i.text == 'Hot Dog' || i.text == 'HotDog'  || i.text == 'hotdog' )
         setState(
           () {
             isHotDog = true;
