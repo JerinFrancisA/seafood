@@ -1,6 +1,6 @@
 # seafood
 
-seafood app inspired from the silicon valley series
+seafood app inspired from the silicon valley series.
 
 ## Getting Started
 
